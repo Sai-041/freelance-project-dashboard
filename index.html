@@ -6,7 +6,7 @@
 
   <title>Studio — Project Dashboard</title>
   <link rel="stylesheet" href="style.css?v=9">
-  <link rel="stylesheet" href="theme.css?v=2">
+  <link rel="stylesheet" href="theme.css?v=3">
 </head>
 
 <body data-theme="dark">
@@ -18,8 +18,13 @@
         <a class="nav-link active" href="#" aria-current="page">Dashboard</a>
         <a class="nav-link" href="#projects">Projects</a>
         <a class="nav-link" href="#">Clients</a>
-        <a class="nav-link" href="#appearance">Settings</a>
+        <a class="nav-link" href="#backup">Settings</a>
       </nav>
+
+      <div class="theme-options header-theme-options" role="group" aria-label="Choose dashboard theme">
+        <button class="theme-button active" type="button" data-theme-option="dark" aria-label="Use dark theme" title="Dark theme" aria-pressed="true">☾</button>
+        <button class="theme-button" type="button" data-theme-option="light" aria-label="Use light theme" title="Light theme" aria-pressed="false">☀</button>
+      </div>
     </aside>
 
     <main class="content">
@@ -173,19 +178,6 @@
         <h2 id="empty-state-title">No projects yet</h2>
         <p id="empty-state-message">Create your first project to start building your dashboard.</p>
         <button class="create-first-button" id="create-first-project" type="button">+ Create First Project</button>
-      </section>
-
-      <section class="appearance-panel" id="appearance" aria-labelledby="appearance-title">
-        <div>
-          <p class="settings-eyebrow">Settings / Appearance</p>
-          <h2 id="appearance-title">Choose Theme</h2>
-          <p>Select the look that feels most comfortable for your workspace.</p>
-        </div>
-
-        <div class="theme-options" role="group" aria-label="Choose dashboard theme">
-          <button class="theme-button active" type="button" data-theme-option="dark" aria-pressed="true">Dark</button>
-          <button class="theme-button" type="button" data-theme-option="light" aria-pressed="false">Light</button>
-        </div>
       </section>
 
       <section class="backup-panel" id="backup" aria-labelledby="backup-title">

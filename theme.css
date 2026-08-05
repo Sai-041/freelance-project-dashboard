@@ -49,8 +49,11 @@ body {
 .sidebar {
   position: relative;
   z-index: 3;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-areas:
+    "brand theme"
+    "nav nav";
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
   gap: 30px;
@@ -61,6 +64,7 @@ body {
 }
 
 .brand {
+  grid-area: brand;
   display: flex;
   align-items: center;
   gap: 11px;
@@ -82,7 +86,7 @@ body {
   letter-spacing: 0;
 }
 
-.nav { flex-direction: row; align-items: center; gap: 4px; }
+.nav { grid-area: nav; flex-direction: row; align-items: center; gap: 4px; }
 
 .nav-link {
   padding: 9px 14px;
@@ -356,6 +360,23 @@ button:focus-visible,
   border-radius: 999px;
 }
 
+.header-theme-options {
+  grid-area: theme;
+  justify-self: end;
+  gap: 3px;
+  padding: 3px;
+}
+
+.header-theme-options .theme-button {
+  display: grid;
+  width: 30px;
+  min-width: 0;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  font-size: 15px;
+}
+
 .theme-button { min-width: 80px; color: #aeb2b7; background: transparent; }
 .theme-button:hover, .theme-button.active { color: #111; background: var(--accent); }
 .empty-state { max-width: none; background: rgba(20, 22, 26, 0.75); border-color: rgba(255, 90, 31, 0.28); border-radius: 20px; }
@@ -455,7 +476,7 @@ body[data-theme="light"] .confirm-modal p { color: #62666a; }
   body { padding: 0; }
   .dashboard { width: 100%; min-height: 100vh; border: 0; border-radius: 0; }
   body[data-theme="light"] { padding: 0; }
-  .sidebar { align-items: flex-start; flex-direction: column; gap: 18px; }
+  .sidebar { align-items: center; gap: 18px; }
   .nav { width: 100%; overflow-x: auto; }
   .content { padding: 0 24px 54px; }
   .page-header { grid-template-columns: 1fr; min-height: 310px; padding: 46px 0 90px; }
