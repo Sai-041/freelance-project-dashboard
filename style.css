@@ -170,6 +170,20 @@
       outline: 2px solid rgba(89, 217, 142, 0.2);
     }
 
+    .form-field input[type="date"] {
+      color-scheme: dark;
+    }
+
+    .form-field input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(1);
+      opacity: 0.85;
+    }
+
+    .form-field input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+
     .form-actions {
       display: flex;
       align-items: center;

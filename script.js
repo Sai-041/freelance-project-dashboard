@@ -238,6 +238,15 @@
       }).format(budgetValue);
     }
 
+    function formatBudgetInput(budgetValue) {
+      if (budgetValue === "" || budgetValue === null || budgetValue === undefined) {
+        return "";
+      }
+
+      const digits = String(budgetValue).replace(/\D/g, "");
+      return digits ? Number(digits).toLocaleString("en-US") : "";
+    }
+
     function createMetaRow(labelText, valueText) {
       const row = document.createElement("p");
       row.className = "meta-row";
@@ -640,7 +649,7 @@
       startDateInput.value = project.startDate;
       endDateInput.value = project.endDate;
       endDateInput.min = project.startDate;
-      projectBudgetInput.value = project.budget;
+      projectBudgetInput.value = formatBudgetInput(project.budget);
       formError.hidden = true;
       formTitle.textContent = "Edit Project";
       submitProjectButton.textContent = "Save Changes";
@@ -666,6 +675,10 @@
       endDateInput.min = startDateInput.value;
     });
 
+    projectBudgetInput.addEventListener("input", function () {
+      projectBudgetInput.value = formatBudgetInput(projectBudgetInput.value);
+    });
+
     projectForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -674,7 +687,7 @@
       const projectStatus = projectStatusInput.value;
       const startDate = startDateInput.value;
       const endDate = endDateInput.value;
-      const budgetValue = projectBudgetInput.value;
+      const budgetValue = projectBudgetInput.value.replaceAll(",", "");
       const projectBudget = budgetValue === "" ? "" : Number(budgetValue);
 
       if (startDate && endDate && endDate < startDate) {
