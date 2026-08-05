@@ -299,6 +299,14 @@
       return "Not Started";
     }
 
+    function getStatusFromProgress(progressValue) {
+      const progress = Number(progressValue) || 0;
+
+      if (progress >= 100) return "Completed";
+      if (progress >= 25) return "In Progress";
+      return "Planning";
+    }
+
     function createMetaRow(labelText, valueText) {
       const row = document.createElement("p");
       row.className = "meta-row";
@@ -760,6 +768,7 @@
       projectBudgetInput.value = formatBudgetInput(project.budget);
       projectProgressInput.value = project.progress ?? 0;
       progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
+      projectStatusInput.value = getStatusFromProgress(projectProgressInput.value);
       projectNotesInput.value = project.notes || "";
       notesCount.textContent = String(projectNotesInput.value.length);
       formError.hidden = true;
@@ -798,6 +807,7 @@
 
     projectProgressInput.addEventListener("input", function () {
       progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
+      projectStatusInput.value = getStatusFromProgress(projectProgressInput.value);
     });
 
     projectNotesInput.addEventListener("input", function () {
@@ -809,12 +819,12 @@
 
       const projectName = projectNameInput.value.trim() || "Not set";
       const clientName = clientNameInput.value.trim() || "Not set";
-      const projectStatus = projectStatusInput.value;
       const startDate = startDateInput.value;
       const endDate = endDateInput.value;
       const budgetValue = projectBudgetInput.value.replaceAll(",", "");
       const projectBudget = budgetValue === "" ? "" : Number(budgetValue);
       const projectProgress = Number(projectProgressInput.value);
+      const projectStatus = getStatusFromProgress(projectProgress);
       const projectNotes = projectNotesInput.value.trim();
 
       if (startDate && endDate && endDate < startDate) {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>My Project Dashboard</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 
 <body>
@@ -79,12 +79,13 @@
 
         <div class="form-field">
           <label for="project-status">Status</label>
-          <select id="project-status" name="projectStatus">
-            <option value="Planning">Planning</option>
-            <option value="In Progress" selected>In Progress</option>
+          <select id="project-status" name="projectStatus" disabled aria-describedby="status-help">
+            <option value="Planning" selected>Planning</option>
+            <option value="In Progress">In Progress</option>
             <option value="Review">Review</option>
             <option value="Completed">Completed</option>
           </select>
+          <small id="status-help">Updated automatically from project progress.</small>
         </div>
 
         <div class="form-field">
@@ -203,6 +204,6 @@
     </section>
   </div>
 
-  <script src="script.js?v=13"></script>
+  <script src="script.js?v=14"></script>
 </body>
 </html>

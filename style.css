@@ -172,6 +172,18 @@
       outline: 2px solid rgba(89, 217, 142, 0.2);
     }
 
+    .form-field select:disabled {
+      color: #aeb6c0;
+      background: #20252b;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    .form-field > small {
+      color: #8b949e;
+      font-size: 12px;
+    }
+
     .notes-field {
       grid-column: 1 / -1;
     }
