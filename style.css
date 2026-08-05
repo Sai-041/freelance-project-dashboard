@@ -184,6 +184,16 @@
       opacity: 1;
     }
 
+    .progress-field output {
+      color: #59d98e;
+    }
+
+    .progress-field input[type="range"] {
+      padding: 0;
+      accent-color: #59d98e;
+      cursor: pointer;
+    }
+
     .form-actions {
       display: flex;
       align-items: center;
@@ -424,6 +434,34 @@
       padding: 14px;
       background: rgba(0, 0, 0, 0.16);
       border-radius: 10px;
+    }
+
+    .project-progress {
+      margin: 18px 0;
+    }
+
+    .progress-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: #aeb6c0;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .progress-track {
+      height: 8px;
+      overflow: hidden;
+      background: #30363d;
+      border-radius: 999px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #48c980, #72e5a2);
+      border-radius: inherit;
+      transition: width 0.3s ease;
     }
 
     .meta-row {
