@@ -123,11 +123,51 @@
       clearTimeout(toastTimer);
       toast.textContent = message;
       toast.classList.toggle("toast-error", type === "error");
+      toast.classList.toggle("toast-warning", type === "warning");
       toast.hidden = false;
 
       toastTimer = setTimeout(function () {
         toast.hidden = true;
       }, 3500);
+    }
+
+    function formatDeadlineProjectNames(projects) {
+      const visibleNames = projects.slice(0, 2).map(function (project) {
+        return project.name;
+      });
+      const remainingCount = projects.length - visibleNames.length;
+
+      return remainingCount > 0
+        ? `${visibleNames.join(", ")} +${remainingCount} more`
+        : visibleNames.join(", ");
+    }
+
+    function showDeadlineAlert() {
+      const activeProjects = savedProjects.filter(function (project) {
+        return project.status !== "Completed";
+      });
+      const overdueProjects = activeProjects.filter(function (project) {
+        return getDeadlineIndicator(project.endDate).label === "Overdue";
+      });
+      const dueSoonProjects = activeProjects.filter(function (project) {
+        return getDeadlineIndicator(project.endDate).label === "Due Soon";
+      });
+
+      if (overdueProjects.length > 0) {
+        const overdueNames = formatDeadlineProjectNames(overdueProjects);
+        const dueSoonText = dueSoonProjects.length > 0
+          ? ` ${dueSoonProjects.length} project${dueSoonProjects.length === 1 ? " is" : "s are"} due soon.`
+          : "";
+        showToast(`${overdueProjects.length} overdue: ${overdueNames}.${dueSoonText}`, "error");
+        return;
+      }
+
+      if (dueSoonProjects.length > 0) {
+        showToast(
+          `${dueSoonProjects.length} due soon: ${formatDeadlineProjectNames(dueSoonProjects)}.`,
+          "warning"
+        );
+      }
     }
 
     function closeConfirmModal(result) {
@@ -545,6 +585,7 @@
 
     const savedProjects = loadProjects();
     renderProjects();
+    setTimeout(showDeadlineAlert, 400);
 
     filterButtons.forEach(function (button) {
       button.addEventListener("click", function () {

@@ -665,6 +665,11 @@
       background: #b23a4d;
     }
 
+    .toast-warning {
+      color: #2a2108;
+      background: #f3c969;
+    }
+
     .modal-backdrop {
       position: fixed;
       z-index: 30;
