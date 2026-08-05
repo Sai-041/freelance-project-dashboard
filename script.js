@@ -38,9 +38,11 @@
     const confirmMessage = document.querySelector("#confirm-message");
     const confirmCancelButton = document.querySelector("#confirm-cancel");
     const confirmAcceptButton = document.querySelector("#confirm-accept");
+    const themeButtons = document.querySelectorAll(".theme-button");
     const storageKey = "freelanceProjects";
     const storageVersionKey = "freelanceProjectsVersion";
     const currentStorageVersion = "2";
+    const themeStorageKey = "dashboardTheme";
     let editingProjectId = null;
     let activeFilter = "All";
     let searchQuery = "";
@@ -130,6 +132,31 @@
         toast.hidden = true;
       }, 3500);
     }
+
+    function applyTheme(theme, showNotification = false) {
+      const selectedTheme = theme === "light" ? "light" : "dark";
+      document.body.dataset.theme = selectedTheme;
+      localStorage.setItem(themeStorageKey, selectedTheme);
+
+      themeButtons.forEach(function (button) {
+        const isActive = button.dataset.themeOption === selectedTheme;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+      });
+
+      if (showNotification) {
+        showToast(`${selectedTheme === "light" ? "Light" : "Dark"} theme applied.`);
+      }
+    }
+
+    const savedTheme = localStorage.getItem(themeStorageKey) || "dark";
+    applyTheme(savedTheme);
+
+    themeButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        applyTheme(button.dataset.themeOption, true);
+      });
+    });
 
     function formatDeadlineProjectNames(projects) {
       const visibleNames = projects.slice(0, 2).map(function (project) {
