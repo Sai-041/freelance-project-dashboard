@@ -23,6 +23,7 @@
     const exportDataButton = document.querySelector("#export-data");
     const importDataButton = document.querySelector("#import-data");
     const importFileInput = document.querySelector("#import-file");
+    const resetDataButton = document.querySelector("#reset-data");
     const backupMessage = document.querySelector("#backup-message");
     const storageKey = "freelanceProjects";
     const storageVersionKey = "freelanceProjectsVersion";
@@ -31,6 +32,7 @@
     let activeFilter = "All";
     let searchQuery = "";
     let activeSort = "default";
+    let resetConfirmationTimer = null;
     const defaultProjects = [
       {
         id: "default-3d-commercial",
@@ -470,6 +472,42 @@
       } finally {
         importFileInput.value = "";
       }
+    });
+
+    resetDataButton.addEventListener("click", function () {
+      const isConfirming = resetDataButton.classList.contains("confirming");
+
+      if (!isConfirming) {
+        resetDataButton.classList.add("confirming");
+        resetDataButton.textContent = "Click Again to Reset";
+        backupMessage.textContent = "Click Reset Data once more within 5 seconds to continue.";
+
+        resetConfirmationTimer = setTimeout(function () {
+          resetDataButton.classList.remove("confirming");
+          resetDataButton.textContent = "Reset Data";
+          backupMessage.textContent = "Reset cancelled. Your projects were not changed.";
+        }, 5000);
+        return;
+      }
+
+      clearTimeout(resetConfirmationTimer);
+      resetDataButton.classList.remove("confirming");
+      resetDataButton.textContent = "Reset Data";
+
+      const shouldReset = confirm(
+        "Delete all projects stored in this browser? This cannot be undone unless you have exported a backup."
+      );
+
+      if (!shouldReset) {
+        backupMessage.textContent = "Reset cancelled. Your projects were not changed.";
+        return;
+      }
+
+      savedProjects.splice(0, savedProjects.length);
+      saveProjects(savedProjects);
+      localStorage.setItem(storageVersionKey, currentStorageVersion);
+      renderProjects();
+      backupMessage.textContent = "All project data has been reset.";
     });
 
     function setFormVisibility(isVisible) {

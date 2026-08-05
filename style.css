@@ -308,12 +308,25 @@
     .backup-actions {
       display: flex;
       flex: 0 0 auto;
+      flex-wrap: wrap;
       gap: 10px;
     }
 
     .import-button {
       color: #d7dce2;
       background: #2a3037;
+    }
+
+    .reset-button {
+      color: #ffaaaa;
+      background: #382226;
+      border: 1px solid #65333b;
+    }
+
+    .reset-button:hover,
+    .reset-button.confirming {
+      color: #ffffff;
+      background: #8d3442;
     }
 
     .backup-panel .backup-message {
