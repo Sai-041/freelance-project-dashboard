@@ -15,6 +15,9 @@
     const projectSearchInput = document.querySelector("#project-search");
     const projectSortInput = document.querySelector("#project-sort");
     const emptyState = document.querySelector("#empty-state");
+    const emptyStateTitle = document.querySelector("#empty-state-title");
+    const emptyStateMessage = document.querySelector("#empty-state-message");
+    const createFirstProjectButton = document.querySelector("#create-first-project");
     const filterButtons = document.querySelectorAll(".filter-button");
     const totalProjectsValue = document.querySelector("#summary-total-projects");
     const inProgressValue = document.querySelector("#summary-in-progress");
@@ -372,6 +375,16 @@
       sortedProjects.forEach(createProjectCard);
       projectCount.textContent = `${filteredProjects.length} of ${savedProjects.length} projects`;
       emptyState.hidden = filteredProjects.length > 0;
+
+      if (savedProjects.length === 0) {
+        emptyStateTitle.textContent = "No projects yet";
+        emptyStateMessage.textContent = "Create your first project to start building your dashboard.";
+        createFirstProjectButton.hidden = false;
+      } else if (filteredProjects.length === 0) {
+        emptyStateTitle.textContent = "No matching projects";
+        emptyStateMessage.textContent = "Try changing your search text or status filter.";
+        createFirstProjectButton.hidden = true;
+      }
     }
 
     function sortProjects(projects) {
@@ -697,6 +710,11 @@
       }
 
       startNewProject();
+    });
+
+    createFirstProjectButton.addEventListener("click", function () {
+      startNewProject();
+      projectForm.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     cancelProjectButton.addEventListener("click", function () {

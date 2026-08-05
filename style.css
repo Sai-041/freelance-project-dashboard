@@ -294,6 +294,27 @@
       border-radius: 16px;
     }
 
+    .empty-state h2 {
+      margin: 0 0 8px;
+      color: #f5f7fa;
+      font-size: 20px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .create-first-button {
+      margin-top: 18px;
+      color: #102417;
+      background: #59d98e;
+    }
+
+    .create-first-button:hover {
+      background: #72e5a2;
+    }
+
     .backup-panel {
       display: flex;
       align-items: center;
