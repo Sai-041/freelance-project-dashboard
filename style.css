@@ -154,7 +154,8 @@
     }
 
     .form-field input,
-    .form-field select {
+    .form-field select,
+    .form-field textarea {
       width: 100%;
       padding: 11px 12px;
       color: #f5f7fa;
@@ -165,9 +166,24 @@
     }
 
     .form-field input:focus,
-    .form-field select:focus {
+    .form-field select:focus,
+    .form-field textarea:focus {
       border-color: #59d98e;
       outline: 2px solid rgba(89, 217, 142, 0.2);
+    }
+
+    .notes-field {
+      grid-column: 1 / -1;
+    }
+
+    .notes-field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .notes-field small {
+      color: #8b949e;
+      text-align: right;
     }
 
     .form-field input[type="date"] {
@@ -447,6 +463,19 @@
 
     .project-progress {
       margin: 18px 0;
+    }
+
+    .project-notes {
+      margin: 18px 0;
+      padding: 12px 14px;
+      color: #c8ced6;
+      background: rgba(0, 0, 0, 0.12);
+      border-left: 3px solid #49515b;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
     }
 
     .progress-heading {

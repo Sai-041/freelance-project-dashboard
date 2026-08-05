@@ -8,6 +8,8 @@
     const projectBudgetInput = document.querySelector("#project-budget");
     const projectProgressInput = document.querySelector("#project-progress");
     const progressValue = document.querySelector("#progress-value");
+    const projectNotesInput = document.querySelector("#project-notes");
+    const notesCount = document.querySelector("#notes-count");
     const cancelProjectButton = document.querySelector("#cancel-project");
     const formTitle = document.querySelector("#form-title");
     const submitProjectButton = document.querySelector("#submit-project");
@@ -56,7 +58,8 @@
         startDate: "",
         endDate: "",
         budget: "",
-        progress: 0
+        progress: 0,
+        notes: ""
       },
       {
         id: "default-product-animation",
@@ -66,7 +69,8 @@
         startDate: "",
         endDate: "",
         budget: "",
-        progress: 0
+        progress: 0,
+        notes: ""
       }
     ];
 
@@ -92,7 +96,8 @@
             startDate: project.startDate || "",
             endDate: project.endDate || "",
             budget: project.budget ?? "",
-            progress: Math.min(100, Math.max(0, Number(project.progress) || 0))
+            progress: Math.min(100, Math.max(0, Number(project.progress) || 0)),
+            notes: typeof project.notes === "string" ? project.notes.slice(0, 300) : ""
           };
         });
 
@@ -176,6 +181,7 @@
       const endDate = project.endDate || "";
       const budget = project.budget === "" || project.budget == null ? "" : Number(project.budget);
       const progress = project.progress === undefined ? 0 : Number(project.progress);
+      const notes = project.notes === undefined ? "" : project.notes;
 
       if ((startDate && !validDatePattern.test(startDate)) || (endDate && !validDatePattern.test(endDate))) {
         throw new Error("A project contains an invalid date.");
@@ -193,6 +199,10 @@
         throw new Error("A project contains an invalid progress value.");
       }
 
+      if (typeof notes !== "string" || notes.length > 300) {
+        throw new Error("A project contains invalid notes.");
+      }
+
       return {
         id: typeof project.id === "string" && project.id ? project.id : createProjectId(),
         name: typeof project.name === "string" && project.name.trim() ? project.name.trim() : "Not set",
@@ -201,7 +211,8 @@
         startDate,
         endDate,
         budget,
-        progress
+        progress,
+        notes
       };
     }
 
@@ -360,6 +371,10 @@
       progressTrack.append(progressFill);
       projectProgress.append(progressHeading, progressTrack);
 
+      const projectNotes = document.createElement("p");
+      projectNotes.className = "project-notes";
+      projectNotes.textContent = project.notes?.trim() || "Notes: Not set";
+
       const openButton = document.createElement("button");
       openButton.type = "button";
       openButton.textContent = "Open Project";
@@ -397,7 +412,7 @@
       actions.className = "card-actions";
       actions.append(openButton, editButton, deleteButton);
 
-      card.append(title, client, statusRow, projectMeta, projectProgress, actions);
+      card.append(title, client, statusRow, projectMeta, projectProgress, projectNotes, actions);
       projectsContainer.append(card);
     }
 
@@ -711,6 +726,7 @@
       } else {
         projectForm.reset();
         progressValue.textContent = "Not Started — 0%";
+        notesCount.textContent = "0";
         endDateInput.min = "";
         formError.textContent = "Please check the values you entered.";
         formError.hidden = true;
@@ -724,6 +740,7 @@
       editingProjectId = null;
       projectForm.reset();
       progressValue.textContent = "Not Started — 0%";
+      notesCount.textContent = "0";
       endDateInput.min = "";
       formError.textContent = "Please check the values you entered.";
       formError.hidden = true;
@@ -743,6 +760,8 @@
       projectBudgetInput.value = formatBudgetInput(project.budget);
       projectProgressInput.value = project.progress ?? 0;
       progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
+      projectNotesInput.value = project.notes || "";
+      notesCount.textContent = String(projectNotesInput.value.length);
       formError.hidden = true;
       formTitle.textContent = "Edit Project";
       submitProjectButton.textContent = "Save Changes";
@@ -781,6 +800,10 @@
       progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
     });
 
+    projectNotesInput.addEventListener("input", function () {
+      notesCount.textContent = String(projectNotesInput.value.length);
+    });
+
     projectForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -792,6 +815,7 @@
       const budgetValue = projectBudgetInput.value.replaceAll(",", "");
       const projectBudget = budgetValue === "" ? "" : Number(budgetValue);
       const projectProgress = Number(projectProgressInput.value);
+      const projectNotes = projectNotesInput.value.trim();
 
       if (startDate && endDate && endDate < startDate) {
         formError.textContent = "End date cannot be before the start date.";
@@ -827,7 +851,8 @@
             startDate,
             endDate,
             budget: projectBudget,
-            progress: projectProgress
+            progress: projectProgress,
+            notes: projectNotes
           };
 
           saveProjects(savedProjects);
@@ -847,7 +872,8 @@
         startDate,
         endDate,
         budget: projectBudget,
-        progress: projectProgress
+        progress: projectProgress,
+        notes: projectNotes
       };
 
       savedProjects.push(newProject);

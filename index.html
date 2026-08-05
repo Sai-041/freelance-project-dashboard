@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>My Project Dashboard</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 
 <body>
@@ -115,6 +115,12 @@
           <output id="progress-value" for="project-progress">Not Started — 0%</output>
         </div>
 
+        <div class="form-field notes-field">
+          <label for="project-notes">Notes / short description</label>
+          <textarea id="project-notes" name="projectNotes" rows="3" maxlength="300" placeholder="Brief project details, goals, or reminders..."></textarea>
+          <small><span id="notes-count">0</span>/300 characters</small>
+        </div>
+
         <p class="form-error" id="form-error" role="alert" hidden>
           Please check the values you entered.
         </p>
@@ -197,6 +203,6 @@
     </section>
   </div>
 
-  <script src="script.js?v=12"></script>
+  <script src="script.js?v=13"></script>
 </body>
 </html>
