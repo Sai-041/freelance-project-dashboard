@@ -176,8 +176,8 @@
 
     .form-field input[type="date"]::-webkit-calendar-picker-indicator {
       cursor: pointer;
-      filter: invert(1);
-      opacity: 0.85;
+      filter: brightness(0) invert(1);
+      opacity: 1;
     }
 
     .form-field input[type="date"]::-webkit-calendar-picker-indicator:hover {
