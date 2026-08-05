@@ -288,13 +288,6 @@
       return "Not Started";
     }
 
-    function getNearestProgressStage(progressValue) {
-      const stages = [0, 25, 50, 75, 100];
-      return stages.reduce(function (nearest, stage) {
-        return Math.abs(stage - progressValue) < Math.abs(nearest - progressValue) ? stage : nearest;
-      }, 0);
-    }
-
     function createMetaRow(labelText, valueText) {
       const row = document.createElement("p");
       row.className = "meta-row";
@@ -717,7 +710,7 @@
         projectNameInput.focus();
       } else {
         projectForm.reset();
-        progressValue.textContent = "Not Started";
+        progressValue.textContent = "Not Started — 0%";
         endDateInput.min = "";
         formError.textContent = "Please check the values you entered.";
         formError.hidden = true;
@@ -730,7 +723,7 @@
     function startNewProject() {
       editingProjectId = null;
       projectForm.reset();
-      progressValue.textContent = "Not Started";
+      progressValue.textContent = "Not Started — 0%";
       endDateInput.min = "";
       formError.textContent = "Please check the values you entered.";
       formError.hidden = true;
@@ -748,8 +741,8 @@
       endDateInput.value = project.endDate;
       endDateInput.min = project.startDate;
       projectBudgetInput.value = formatBudgetInput(project.budget);
-      projectProgressInput.value = String(getNearestProgressStage(Number(project.progress) || 0));
-      progressValue.textContent = getProgressStage(projectProgressInput.value);
+      projectProgressInput.value = project.progress ?? 0;
+      progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
       formError.hidden = true;
       formTitle.textContent = "Edit Project";
       submitProjectButton.textContent = "Save Changes";
@@ -784,8 +777,8 @@
       projectBudgetInput.value = formatBudgetInput(projectBudgetInput.value);
     });
 
-    projectProgressInput.addEventListener("change", function () {
-      progressValue.textContent = getProgressStage(projectProgressInput.value);
+    projectProgressInput.addEventListener("input", function () {
+      progressValue.textContent = `${getProgressStage(projectProgressInput.value)} — ${projectProgressInput.value}%`;
     });
 
     projectForm.addEventListener("submit", function (event) {

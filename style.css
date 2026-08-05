@@ -190,6 +190,19 @@
       font-weight: bold;
     }
 
+    .progress-field input[type="range"] {
+      padding: 0;
+      accent-color: #59d98e;
+      cursor: pointer;
+    }
+
+    .progress-field datalist {
+      display: flex;
+      justify-content: space-between;
+      color: #8b949e;
+      font-size: 11px;
+    }
+
     .form-actions {
       display: flex;
       align-items: center;
