@@ -280,6 +280,52 @@
       border-radius: 16px;
     }
 
+    .backup-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      max-width: 800px;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #181b1f;
+      border: 1px solid #2a3037;
+      border-radius: 16px;
+    }
+
+    .backup-panel h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .backup-panel p {
+      margin: 0;
+      color: #8b949e;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .backup-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 10px;
+    }
+
+    .import-button {
+      color: #d7dce2;
+      background: #2a3037;
+    }
+
+    .backup-panel .backup-message {
+      display: none;
+      width: 100%;
+      color: #9ee7bd;
+    }
+
+    .backup-panel .backup-message:not(:empty) {
+      display: block;
+    }
+
     .projects {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -519,5 +565,18 @@
 
       .status-filters {
         width: 100%;
+      }
+
+      .backup-panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .backup-actions {
+        width: 100%;
+      }
+
+      .backup-actions button {
+        flex: 1;
       }
     }

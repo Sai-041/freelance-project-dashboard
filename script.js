@@ -20,6 +20,10 @@
     const inProgressValue = document.querySelector("#summary-in-progress");
     const completedValue = document.querySelector("#summary-completed");
     const totalBudgetValue = document.querySelector("#summary-total-budget");
+    const exportDataButton = document.querySelector("#export-data");
+    const importDataButton = document.querySelector("#import-data");
+    const importFileInput = document.querySelector("#import-file");
+    const backupMessage = document.querySelector("#backup-message");
     const storageKey = "freelanceProjects";
     const storageVersionKey = "freelanceProjectsVersion";
     const currentStorageVersion = "2";
@@ -89,6 +93,24 @@
 
     function saveProjects(projects) {
       localStorage.setItem(storageKey, JSON.stringify(projects));
+    }
+
+    function normalizeImportedProject(project) {
+      const validStatuses = ["Planning", "In Progress", "Review", "Completed"];
+
+      if (!project || typeof project !== "object" || Array.isArray(project)) {
+        throw new Error("A project has an invalid format.");
+      }
+
+      return {
+        id: typeof project.id === "string" && project.id ? project.id : createProjectId(),
+        name: typeof project.name === "string" && project.name.trim() ? project.name.trim() : "Not set",
+        client: typeof project.client === "string" && project.client.trim() ? project.client.trim() : "Not set",
+        status: validStatuses.includes(project.status) ? project.status : "In Progress",
+        startDate: typeof project.startDate === "string" ? project.startDate : "",
+        endDate: typeof project.endDate === "string" ? project.endDate : "",
+        budget: project.budget === "" || project.budget == null ? "" : Math.max(0, Number(project.budget) || 0)
+      };
     }
 
     function formatDate(dateValue) {
@@ -385,6 +407,65 @@
     projectSortInput.addEventListener("change", function () {
       activeSort = projectSortInput.value;
       renderProjects();
+    });
+
+    exportDataButton.addEventListener("click", function () {
+      const backup = {
+        app: "SAI Studio Project Dashboard",
+        exportedAt: new Date().toISOString(),
+        projects: savedProjects
+      };
+      const file = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const downloadUrl = URL.createObjectURL(file);
+      const downloadLink = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+
+      downloadLink.href = downloadUrl;
+      downloadLink.download = `sai-studio-backup-${date}.json`;
+      downloadLink.click();
+      URL.revokeObjectURL(downloadUrl);
+      backupMessage.textContent = `${savedProjects.length} projects exported successfully.`;
+    });
+
+    importDataButton.addEventListener("click", function () {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener("change", async function () {
+      const selectedFile = importFileInput.files[0];
+
+      if (!selectedFile) {
+        return;
+      }
+
+      try {
+        const importedData = JSON.parse(await selectedFile.text());
+        const importedProjects = Array.isArray(importedData) ? importedData : importedData.projects;
+
+        if (!Array.isArray(importedProjects)) {
+          throw new Error("This is not a valid SAI Studio backup file.");
+        }
+
+        const normalizedProjects = importedProjects.map(normalizeImportedProject);
+        const shouldReplace = confirm(
+          `Import ${normalizedProjects.length} projects? This will replace the projects currently stored in this browser.`
+        );
+
+        if (!shouldReplace) {
+          backupMessage.textContent = "Import cancelled. Your current projects were not changed.";
+          return;
+        }
+
+        savedProjects.splice(0, savedProjects.length, ...normalizedProjects);
+        saveProjects(savedProjects);
+        localStorage.setItem(storageVersionKey, currentStorageVersion);
+        renderProjects();
+        backupMessage.textContent = `${savedProjects.length} projects imported successfully.`;
+      } catch (error) {
+        backupMessage.textContent = error.message || "The backup file could not be imported.";
+      } finally {
+        importFileInput.value = "";
+      }
     });
 
     function setFormVisibility(isVisible) {

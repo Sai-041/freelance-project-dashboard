@@ -17,7 +17,7 @@
         <a class="nav-link active" href="#" aria-current="page">Dashboard</a>
         <a class="nav-link" href="#projects">Projects</a>
         <a class="nav-link" href="#">Clients</a>
-        <a class="nav-link" href="#">Settings</a>
+        <a class="nav-link" href="#backup">Settings</a>
       </nav>
     </aside>
 
@@ -145,6 +145,21 @@
           <button class="filter-button" type="button" data-status="Completed" aria-pressed="false">Completed</button>
         </div>
       </div>
+
+      <section class="backup-panel" id="backup" aria-labelledby="backup-title">
+        <div>
+          <h2 id="backup-title">Data Backup</h2>
+          <p>Export your projects regularly so you can restore them if browser data is cleared.</p>
+        </div>
+
+        <div class="backup-actions">
+          <button id="export-data" type="button">Export Data</button>
+          <button class="import-button" id="import-data" type="button">Import Data</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+        </div>
+
+        <p class="backup-message" id="backup-message" role="status" aria-live="polite"></p>
+      </section>
 
       <section class="projects" id="projects" aria-label="Project list"></section>
       <p class="empty-state" id="empty-state" hidden>No projects match your search or filter.</p>
