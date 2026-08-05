@@ -585,6 +585,7 @@
       margin: 0;
       color: #aeb6c0;
       line-height: 1.6;
+      white-space: pre-line;
     }
 
     .modal-actions {

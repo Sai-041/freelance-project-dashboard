@@ -158,9 +158,26 @@
 
     function normalizeImportedProject(project) {
       const validStatuses = ["Planning", "In Progress", "Review", "Completed"];
+      const validDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
       if (!project || typeof project !== "object" || Array.isArray(project)) {
         throw new Error("A project has an invalid format.");
+      }
+
+      const startDate = project.startDate || "";
+      const endDate = project.endDate || "";
+      const budget = project.budget === "" || project.budget == null ? "" : Number(project.budget);
+
+      if ((startDate && !validDatePattern.test(startDate)) || (endDate && !validDatePattern.test(endDate))) {
+        throw new Error("A project contains an invalid date.");
+      }
+
+      if (startDate && endDate && endDate < startDate) {
+        throw new Error("A project has an end date before its start date.");
+      }
+
+      if (budget !== "" && (!Number.isFinite(budget) || budget < 0)) {
+        throw new Error("A project contains an invalid budget.");
       }
 
       return {
@@ -168,9 +185,9 @@
         name: typeof project.name === "string" && project.name.trim() ? project.name.trim() : "Not set",
         client: typeof project.client === "string" && project.client.trim() ? project.client.trim() : "Not set",
         status: validStatuses.includes(project.status) ? project.status : "In Progress",
-        startDate: typeof project.startDate === "string" ? project.startDate : "",
-        endDate: typeof project.endDate === "string" ? project.endDate : "",
-        budget: project.budget === "" || project.budget == null ? "" : Math.max(0, Number(project.budget) || 0)
+        startDate,
+        endDate,
+        budget
       };
     }
 
@@ -546,10 +563,26 @@
           throw new Error("This is not a valid SAI Studio backup file.");
         }
 
+        if (importedProjects.length > 10000) {
+          throw new Error("This backup contains too many projects to import safely.");
+        }
+
         const normalizedProjects = importedProjects.map(normalizeImportedProject);
+        const usedProjectIds = new Set();
+
+        normalizedProjects.forEach(function (project) {
+          if (usedProjectIds.has(project.id)) {
+            project.id = createProjectId();
+          }
+          usedProjectIds.add(project.id);
+        });
+
+        const exportedDate = importedData.exportedAt
+          ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(importedData.exportedAt))
+          : "Not available";
         const shouldReplace = await showConfirmModal({
-          title: "Import backup?",
-          message: `Import ${normalizedProjects.length} projects? This will replace the projects currently stored in this browser.`,
+          title: "Review Import",
+          message: `File: ${selectedFile.name}\nProjects in backup: ${normalizedProjects.length}\nCurrent projects to replace: ${savedProjects.length}\nBackup date: ${exportedDate}\n\nContinue with this import?`,
           confirmLabel: "Import Projects",
           destructive: true
         });
