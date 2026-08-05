@@ -422,8 +422,12 @@
 
       downloadLink.href = downloadUrl;
       downloadLink.download = `sai-studio-backup-${date}.json`;
+      document.body.append(downloadLink);
       downloadLink.click();
-      URL.revokeObjectURL(downloadUrl);
+      downloadLink.remove();
+      setTimeout(function () {
+        URL.revokeObjectURL(downloadUrl);
+      }, 1000);
       backupMessage.textContent = `${savedProjects.length} projects exported successfully.`;
     });
 
