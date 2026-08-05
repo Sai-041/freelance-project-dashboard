@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>My Project Dashboard</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
@@ -103,8 +103,15 @@
         </div>
 
         <div class="form-field progress-field">
-          <label for="project-progress">Progress: <output id="progress-value" for="project-progress">0%</output></label>
-          <input id="project-progress" name="projectProgress" type="range" min="0" max="100" step="5" value="0">
+          <label for="project-progress">Production stage</label>
+          <select id="project-progress" name="projectProgress">
+            <option value="0">Not Started — 0%</option>
+            <option value="25">Pre Production — 25%</option>
+            <option value="50">Production — 50%</option>
+            <option value="75">Post Production — 75%</option>
+            <option value="100">Final Delivery — 100%</option>
+          </select>
+          <output id="progress-value" for="project-progress">Not Started</output>
         </div>
 
         <p class="form-error" id="form-error" role="alert" hidden>
@@ -189,6 +196,6 @@
     </section>
   </div>
 
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>

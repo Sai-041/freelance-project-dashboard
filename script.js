@@ -278,6 +278,23 @@
       return digits ? Number(digits).toLocaleString("en-US") : "";
     }
 
+    function getProgressStage(progressValue) {
+      const progress = Number(progressValue) || 0;
+
+      if (progress >= 100) return "Final Delivery";
+      if (progress >= 75) return "Post Production";
+      if (progress >= 50) return "Production";
+      if (progress >= 25) return "Pre Production";
+      return "Not Started";
+    }
+
+    function getNearestProgressStage(progressValue) {
+      const stages = [0, 25, 50, 75, 100];
+      return stages.reduce(function (nearest, stage) {
+        return Math.abs(stage - progressValue) < Math.abs(nearest - progressValue) ? stage : nearest;
+      }, 0);
+    }
+
     function createMetaRow(labelText, valueText) {
       const row = document.createElement("p");
       row.className = "meta-row";
@@ -334,7 +351,7 @@
 
       const progressHeading = document.createElement("div");
       progressHeading.className = "progress-heading";
-      progressHeading.innerHTML = `<span>Progress</span><span>${progress}%</span>`;
+      progressHeading.innerHTML = `<span>${getProgressStage(progress)}</span><span>${progress}%</span>`;
 
       const progressTrack = document.createElement("div");
       progressTrack.className = "progress-track";
@@ -700,7 +717,7 @@
         projectNameInput.focus();
       } else {
         projectForm.reset();
-        progressValue.textContent = "0%";
+        progressValue.textContent = "Not Started";
         endDateInput.min = "";
         formError.textContent = "Please check the values you entered.";
         formError.hidden = true;
@@ -713,7 +730,7 @@
     function startNewProject() {
       editingProjectId = null;
       projectForm.reset();
-      progressValue.textContent = "0%";
+      progressValue.textContent = "Not Started";
       endDateInput.min = "";
       formError.textContent = "Please check the values you entered.";
       formError.hidden = true;
@@ -731,8 +748,8 @@
       endDateInput.value = project.endDate;
       endDateInput.min = project.startDate;
       projectBudgetInput.value = formatBudgetInput(project.budget);
-      projectProgressInput.value = project.progress ?? 0;
-      progressValue.textContent = `${projectProgressInput.value}%`;
+      projectProgressInput.value = String(getNearestProgressStage(Number(project.progress) || 0));
+      progressValue.textContent = getProgressStage(projectProgressInput.value);
       formError.hidden = true;
       formTitle.textContent = "Edit Project";
       submitProjectButton.textContent = "Save Changes";
@@ -767,8 +784,8 @@
       projectBudgetInput.value = formatBudgetInput(projectBudgetInput.value);
     });
 
-    projectProgressInput.addEventListener("input", function () {
-      progressValue.textContent = `${projectProgressInput.value}%`;
+    projectProgressInput.addEventListener("change", function () {
+      progressValue.textContent = getProgressStage(projectProgressInput.value);
     });
 
     projectForm.addEventListener("submit", function (event) {

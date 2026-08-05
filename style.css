@@ -186,12 +186,8 @@
 
     .progress-field output {
       color: #59d98e;
-    }
-
-    .progress-field input[type="range"] {
-      padding: 0;
-      accent-color: #59d98e;
-      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
     }
 
     .form-actions {
