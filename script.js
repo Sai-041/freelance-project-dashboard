@@ -25,6 +25,12 @@
     const importFileInput = document.querySelector("#import-file");
     const resetDataButton = document.querySelector("#reset-data");
     const backupMessage = document.querySelector("#backup-message");
+    const toast = document.querySelector("#toast");
+    const confirmModal = document.querySelector("#confirm-modal");
+    const confirmTitle = document.querySelector("#confirm-title");
+    const confirmMessage = document.querySelector("#confirm-message");
+    const confirmCancelButton = document.querySelector("#confirm-cancel");
+    const confirmAcceptButton = document.querySelector("#confirm-accept");
     const storageKey = "freelanceProjects";
     const storageVersionKey = "freelanceProjectsVersion";
     const currentStorageVersion = "2";
@@ -33,6 +39,9 @@
     let searchQuery = "";
     let activeSort = "default";
     let resetConfirmationTimer = null;
+    let toastTimer = null;
+    let confirmResolver = null;
+    let previouslyFocusedElement = null;
     const defaultProjects = [
       {
         id: "default-3d-commercial",
@@ -96,6 +105,56 @@
     function saveProjects(projects) {
       localStorage.setItem(storageKey, JSON.stringify(projects));
     }
+
+    function showToast(message, type = "success") {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.toggle("toast-error", type === "error");
+      toast.hidden = false;
+
+      toastTimer = setTimeout(function () {
+        toast.hidden = true;
+      }, 3500);
+    }
+
+    function closeConfirmModal(result) {
+      confirmModal.hidden = true;
+
+      if (confirmResolver) {
+        confirmResolver(result);
+        confirmResolver = null;
+      }
+
+      previouslyFocusedElement?.focus();
+    }
+
+    function showConfirmModal({ title, message, confirmLabel = "Confirm", destructive = false }) {
+      previouslyFocusedElement = document.activeElement;
+      confirmTitle.textContent = title;
+      confirmMessage.textContent = message;
+      confirmAcceptButton.textContent = confirmLabel;
+      confirmAcceptButton.classList.toggle("destructive", destructive);
+      confirmModal.hidden = false;
+      confirmCancelButton.focus();
+
+      return new Promise(function (resolve) {
+        confirmResolver = resolve;
+      });
+    }
+
+    confirmCancelButton.addEventListener("click", function () {
+      closeConfirmModal(false);
+    });
+
+    confirmAcceptButton.addEventListener("click", function () {
+      closeConfirmModal(true);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !confirmModal.hidden) {
+        closeConfirmModal(false);
+      }
+    });
 
     function normalizeImportedProject(project) {
       const validStatuses = ["Planning", "In Progress", "Review", "Completed"];
@@ -248,23 +307,18 @@
       deleteButton.type = "button";
       deleteButton.textContent = "Delete";
       deleteButton.setAttribute("aria-label", `Delete ${project.name}`);
-      deleteButton.addEventListener("click", function () {
-        if (deleteButton.classList.contains("confirming")) {
+      deleteButton.addEventListener("click", async function () {
+        const shouldDelete = await showConfirmModal({
+          title: "Delete project?",
+          message: `Delete “${project.name}”? This action cannot be undone.`,
+          confirmLabel: "Delete Project",
+          destructive: true
+        });
+
+        if (shouldDelete) {
           deleteProject(project.id);
-          return;
+          showToast(`${project.name} deleted.`);
         }
-
-        deleteButton.classList.add("confirming");
-        deleteButton.textContent = "Confirm Delete";
-        deleteButton.setAttribute("aria-label", `Confirm delete ${project.name}`);
-
-        setTimeout(function () {
-          if (deleteButton.isConnected) {
-            deleteButton.classList.remove("confirming");
-            deleteButton.textContent = "Delete";
-            deleteButton.setAttribute("aria-label", `Delete ${project.name}`);
-          }
-        }, 8000);
       });
 
       const actions = document.createElement("div");
@@ -436,11 +490,13 @@
           await writableFile.write(backupText);
           await writableFile.close();
           backupMessage.textContent = `${savedProjects.length} projects exported successfully.`;
+          showToast("Backup saved successfully.");
         } catch (error) {
           if (error.name === "AbortError") {
             backupMessage.textContent = "Export cancelled. No file was saved.";
           } else {
             backupMessage.textContent = "The backup file could not be saved.";
+            showToast("The backup file could not be saved.", "error");
           }
         }
         return;
@@ -459,6 +515,7 @@
         URL.revokeObjectURL(downloadUrl);
       }, 1000);
       backupMessage.textContent = `${savedProjects.length} projects exported successfully.`;
+      showToast("Backup downloaded successfully.");
     });
 
     importDataButton.addEventListener("click", function () {
@@ -481,9 +538,12 @@
         }
 
         const normalizedProjects = importedProjects.map(normalizeImportedProject);
-        const shouldReplace = confirm(
-          `Import ${normalizedProjects.length} projects? This will replace the projects currently stored in this browser.`
-        );
+        const shouldReplace = await showConfirmModal({
+          title: "Import backup?",
+          message: `Import ${normalizedProjects.length} projects? This will replace the projects currently stored in this browser.`,
+          confirmLabel: "Import Projects",
+          destructive: true
+        });
 
         if (!shouldReplace) {
           backupMessage.textContent = "Import cancelled. Your current projects were not changed.";
@@ -495,14 +555,16 @@
         localStorage.setItem(storageVersionKey, currentStorageVersion);
         renderProjects();
         backupMessage.textContent = `${savedProjects.length} projects imported successfully.`;
+        showToast(`${savedProjects.length} projects imported successfully.`);
       } catch (error) {
         backupMessage.textContent = error.message || "The backup file could not be imported.";
+        showToast(error.message || "The backup file could not be imported.", "error");
       } finally {
         importFileInput.value = "";
       }
     });
 
-    resetDataButton.addEventListener("click", function () {
+    resetDataButton.addEventListener("click", async function () {
       const isConfirming = resetDataButton.classList.contains("confirming");
 
       if (!isConfirming) {
@@ -522,9 +584,12 @@
       resetDataButton.classList.remove("confirming");
       resetDataButton.textContent = "Reset Data";
 
-      const shouldReset = confirm(
-        "Delete all projects stored in this browser? This cannot be undone unless you have exported a backup."
-      );
+      const shouldReset = await showConfirmModal({
+        title: "Reset all project data?",
+        message: "Delete all projects stored in this browser? This cannot be undone unless you have exported a backup.",
+        confirmLabel: "Delete All Projects",
+        destructive: true
+      });
 
       if (!shouldReset) {
         backupMessage.textContent = "Reset cancelled. Your projects were not changed.";
@@ -536,6 +601,7 @@
       localStorage.setItem(storageVersionKey, currentStorageVersion);
       renderProjects();
       backupMessage.textContent = "All project data has been reset.";
+      showToast("All project data has been reset.");
     });
 
     function setFormVisibility(isVisible) {
@@ -669,5 +735,5 @@
     });
 
     function openProject() {
-      alert("Project opened!");
+      showToast("Project opened!");
     }

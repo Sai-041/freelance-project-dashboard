@@ -516,6 +516,80 @@
       outline-offset: 3px;
     }
 
+    .toast {
+      position: fixed;
+      z-index: 20;
+      right: 24px;
+      bottom: 24px;
+      max-width: min(360px, calc(100vw - 40px));
+      padding: 14px 18px;
+      color: #102417;
+      background: #72e5a2;
+      border-radius: 10px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+      font-size: 14px;
+      font-weight: bold;
+      animation: toast-in 0.2s ease-out;
+    }
+
+    .toast[hidden],
+    .modal-backdrop[hidden] {
+      display: none;
+    }
+
+    .toast-error {
+      color: #ffffff;
+      background: #b23a4d;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 30;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(5, 7, 9, 0.78);
+      backdrop-filter: blur(4px);
+    }
+
+    .confirm-modal {
+      width: min(440px, 100%);
+      padding: 24px;
+      background: #1c2025;
+      border: 1px solid #3a414a;
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .confirm-modal h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .confirm-modal p {
+      margin: 0;
+      color: #aeb6c0;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .modal-confirm-button.destructive {
+      color: #ffffff;
+      background: #b23a4d;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 700px) {
       .dashboard {
         grid-template-columns: 1fr;
