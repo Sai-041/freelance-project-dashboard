@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Project Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <h2 class="brand">SAI Studio</h2>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a class="nav-link active" href="#" aria-current="page">Dashboard</a>
+        <a class="nav-link" href="#projects">Projects</a>
+        <a class="nav-link" href="#">Clients</a>
+        <a class="nav-link" href="#">Settings</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <h1>My Projects 🎬</h1>
+
+          <p class="subtitle">
+             Project Dashboard
+          </p>
+        </div>
+
+        <button
+          class="new-project-button"
+          id="show-project-form"
+          type="button"
+          aria-controls="project-form"
+          aria-expanded="false"
+        >
+          + New Project
+        </button>
+      </header>
+
+      <section class="summary-grid" aria-label="Project summary">
+        <article class="summary-card">
+          <p class="summary-label">Total Projects</p>
+          <p class="summary-value" id="summary-total-projects">0</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">In Progress</p>
+          <p class="summary-value" id="summary-in-progress">0</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Completed</p>
+          <p class="summary-value" id="summary-completed">0</p>
+        </article>
+
+        <article class="summary-card summary-budget">
+          <p class="summary-label">Total Budget</p>
+          <p class="summary-value" id="summary-total-budget">Rp 0</p>
+        </article>
+      </section>
+
+      <form class="project-form" id="project-form" hidden novalidate>
+        <h2 class="form-title" id="form-title">New Project</h2>
+
+        <div class="form-field">
+          <label for="project-name">Project name</label>
+          <input id="project-name" name="projectName" type="text" autocomplete="off">
+        </div>
+
+        <div class="form-field">
+          <label for="client-name">Client name</label>
+          <input id="client-name" name="clientName" type="text" autocomplete="off">
+        </div>
+
+        <div class="form-field">
+          <label for="project-status">Status</label>
+          <select id="project-status" name="projectStatus">
+            <option value="Planning">Planning</option>
+            <option value="In Progress" selected>In Progress</option>
+            <option value="Review">Review</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="start-date">Start project</label>
+          <input id="start-date" name="startDate" type="date">
+        </div>
+
+        <div class="form-field">
+          <label for="end-date">End project</label>
+          <input id="end-date" name="endDate" type="date">
+        </div>
+
+        <div class="form-field">
+          <label for="project-budget">Budget (IDR)</label>
+          <input id="project-budget" name="projectBudget" type="number" min="0" step="100000" placeholder="10000000">
+        </div>
+
+        <p class="form-error" id="form-error" role="alert" hidden>
+          Please check the values you entered.
+        </p>
+
+        <div class="form-actions">
+          <button id="submit-project" type="submit">Add Project</button>
+          <button class="cancel-button" id="cancel-project" type="button">Cancel</button>
+        </div>
+      </form>
+
+      <div class="project-toolbar">
+        <div class="toolbar-summary">
+          <p class="project-count" id="project-count"></p>
+
+          <div class="toolbar-controls">
+            <input
+              class="project-search"
+              id="project-search"
+              type="search"
+              placeholder="Search project or client..."
+              aria-label="Search projects by name or client"
+            >
+
+            <select class="project-sort" id="project-sort" aria-label="Sort projects">
+              <option value="default">Default order</option>
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+              <option value="deadline-asc">Deadline nearest</option>
+              <option value="deadline-desc">Deadline farthest</option>
+              <option value="budget-desc">Budget highest</option>
+              <option value="budget-asc">Budget lowest</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="status-filters" role="group" aria-label="Filter projects by status">
+          <button class="filter-button active" type="button" data-status="All" aria-pressed="true">All</button>
+          <button class="filter-button" type="button" data-status="Planning" aria-pressed="false">Planning</button>
+          <button class="filter-button" type="button" data-status="In Progress" aria-pressed="false">In Progress</button>
+          <button class="filter-button" type="button" data-status="Review" aria-pressed="false">Review</button>
+          <button class="filter-button" type="button" data-status="Completed" aria-pressed="false">Completed</button>
+        </div>
+      </div>
+
+      <section class="projects" id="projects" aria-label="Project list"></section>
+      <p class="empty-state" id="empty-state" hidden>No projects match your search or filter.</p>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
