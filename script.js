@@ -411,19 +411,47 @@
       renderProjects();
     });
 
-    exportDataButton.addEventListener("click", function () {
+    exportDataButton.addEventListener("click", async function () {
       const backup = {
         app: "SAI Studio Project Dashboard",
         exportedAt: new Date().toISOString(),
         projects: savedProjects
       };
-      const file = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const backupText = JSON.stringify(backup, null, 2);
+      const date = new Date().toISOString().slice(0, 10);
+      const suggestedName = `sai-studio-backup-${date}.json`;
+
+      if ("showSaveFilePicker" in window) {
+        try {
+          const fileHandle = await window.showSaveFilePicker({
+            suggestedName,
+            types: [
+              {
+                description: "JSON backup file",
+                accept: { "application/json": [".json"] }
+              }
+            ]
+          });
+          const writableFile = await fileHandle.createWritable();
+          await writableFile.write(backupText);
+          await writableFile.close();
+          backupMessage.textContent = `${savedProjects.length} projects exported successfully.`;
+        } catch (error) {
+          if (error.name === "AbortError") {
+            backupMessage.textContent = "Export cancelled. No file was saved.";
+          } else {
+            backupMessage.textContent = "The backup file could not be saved.";
+          }
+        }
+        return;
+      }
+
+      const file = new Blob([backupText], { type: "application/json" });
       const downloadUrl = URL.createObjectURL(file);
       const downloadLink = document.createElement("a");
-      const date = new Date().toISOString().slice(0, 10);
 
       downloadLink.href = downloadUrl;
-      downloadLink.download = `sai-studio-backup-${date}.json`;
+      downloadLink.download = suggestedName;
       document.body.append(downloadLink);
       downloadLink.click();
       downloadLink.remove();
